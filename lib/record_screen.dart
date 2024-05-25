@@ -108,21 +108,79 @@ Future<void> uploadVideo(File
   //  print(response.statusCode);
 
     if (response.statusCode == 200) {
-       isUploaded=false;
-    setState(() {});
+       
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Success! Video uploaded!')));
       final uri = Uri.parse('${sultan}/finalAnswer');
       final newRequest = await http.get(uri);
-      if(newRequest.statusCode == 200){
-        if(newRequest.body == true){
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('You are right!')));
-        }
-        else{
-        }
-          
+      List<String> ll = newRequest.body.split(".");
+      isUploaded=false;
+    setState(() {});
+      if(ll[0]=="false"){
+        showModalBottomSheet(context: context, builder: (context){
+          return Container(
+            height: 200,
+            width: double.infinity,
+            child: Column(
+              children: [
+                const Text("Correct your hips"),
+                ElevatedButton(onPressed: (){
+                  Navigator.of(context).pop();
+                }, child: const Text("Close"))
+              ],
+            ),
+          );
+        });
+      }
+      else if (ll[1]=="false"){
+        showModalBottomSheet(context: context, builder: (context){
+          return Container(
+             width: double.infinity,
+            height: 200,
+            child: Column(
+              
+              children: [
+                 Text("Correct your knees"),
+                ElevatedButton(onPressed: (){
+                  Navigator.of(context).pop();
+                }, child: const Text("Close"))
+              ],
+            ),
+          );
+        });
+      }
+      else if (ll[2]=="false"){
+        showModalBottomSheet(context: context, builder: (context){
+          return Container(
+             width: double.infinity,
+            height: 200,
+            child: Column(
+              
+              children: [
+                 Text("Correct your feet position"),
+                ElevatedButton(onPressed: (){
+                  Navigator.of(context).pop();
+                }, child: const Text("Close"))
+              ],
+            ),
+          );
+        });
       }
       else{
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to upload video!')));
+        showModalBottomSheet(context: context, builder: (context){
+          return Container(
+             width: double.infinity,
+            height: 200,
+            child: Column(
+              
+              children: [
+                 Text("Perfect kick. Well done!"),
+                ElevatedButton(onPressed: (){
+                  Navigator.of(context).pop();
+                }, child: const Text("Close"))
+              ],
+            ),
+          );
+        });
       }
 
 
@@ -182,15 +240,15 @@ Future<void> uploadVideo(File
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
+              !isUploaded? ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: isRecording? Colors.red: Colors.green, foregroundColor: Colors.white),
 
                 onPressed: isRecording ? stopRecording : startRecording,
                 child: Text(isRecording ? 'Stop recording' : 'Start recording'),
-              ),
+              ):CircularProgressIndicator(),
               SizedBox(width: MediaQuery.of(context).size.width * 0.02),
               if (videoPath != null)
-                isUploaded? const SingleChildScrollView(): ElevatedButton(
+                isUploaded? const SingleChildScrollView(): isRecording? SizedBox(): ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: isRecording?Colors.orange.withOpacity(0.1): Colors.orange, foregroundColor: Colors.white),
                   onPressed: () async {
                     await uploadVideo(File(videoPath!));

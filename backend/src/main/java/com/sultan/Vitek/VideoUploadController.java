@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.sql.Time;
 import java.util.Map;
 import java.util.UUID;
 
@@ -32,7 +33,9 @@ public class VideoUploadController {
 
     private final Path rootLocation = Paths.get("C:\\Users\\Win11 Pro\\Desktop\\video-storage");
     public String forEgor = "";
-    public boolean decision;
+    public boolean knee;
+    public boolean foot;
+    public boolean hip;
 
     public VideoUploadController() {
         try {
@@ -75,18 +78,29 @@ public class VideoUploadController {
     }
     @GetMapping("/Egorka")
     public ResponseEntity<String> sendToPy(){
+        System.out.println(hip+" "+knee+" "+foot);
         return ResponseEntity.ok(forEgor);
     }
-    @GetMapping("/finalAnswer")
-    public ResponseEntity<Boolean> sendAIAnswer(){
-        return ResponseEntity.ok(decision);
-    }
+
     @PostMapping("/answerAIJson")
     public ResponseEntity<String> getJSONBoolean(@RequestBody JsonNode jsonNode){
+        System.out.println(jsonNode.get("hip").asBoolean());
+        System.out.println(jsonNode.get("knee").asBoolean());
+        System.out.println(jsonNode.get("foot").asBoolean());
 
-        decision = jsonNode.get("boolean").asBoolean();
+        hip = jsonNode.get("hip").asBoolean();
+        knee = jsonNode.get("knee").asBoolean();
+        foot = jsonNode.get("foot").asBoolean();
 
-        return ResponseEntity.ok("Content received: " + decision);
+
+        return ResponseEntity.ok("Content received: " + "knee = "+knee + ", hip = "+ hip+", foot = "+foot);
+
+    }
+    @GetMapping("/finalAnswer")
+    public ResponseEntity<String> sendAIAnswer() throws InterruptedException {
+
+        Thread.sleep(10000);
+        return ResponseEntity.ok(hip+"."+knee+"."+foot);
 
     }
 
